@@ -1,352 +1,2848 @@
-/* PokéCollector — Card Gacha Game — v2 Final */
+/* ==========================================================================
+   PokéCollector — Card Gacha Game — v2 Final
+   Arquivo principal de estilos da interface.
+   Responsável por tema, layout, componentes, animações e responsividade.
+   ========================================================================== */
 
-/* ── TOKENS ── */
-:root{--type-normal:#9da0aa;--type-fire:#fd7d24;--type-water:#4592c4;--type-electric:#eed535;--type-grass:#9bcc50;--type-ice:#51c4e7;--type-fighting:#d56723;--type-poison:#b97fc9;--type-ground:#ab9842;--type-flying:#7da6de;--type-psychic:#f366b9;--type-bug:#729f3f;--type-rock:#a38c21;--type-ghost:#7b62a3;--type-dragon:#7038f8;--type-dark:#707070;--type-steel:#9eb7b8;--type-fairy:#fdb9e9;--rarity-common:#9da0aa;--rarity-uncommon:#4caf50;--rarity-rare:#2196f3;--rarity-epic:#9c27b0;--rarity-legendary:#ff9800;--rarity-mythic:#e91e63;--stat-hp:#ff5959;--stat-atk:#f5ac78;--stat-def:#fae078;--stat-spa:#9db7f5;--stat-spd:#a7db8d;--stat-vel:#fa92b2;--font-display:'Chakra Petch',sans-serif;--font-body:'Lexend',sans-serif;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-xl:28px;--radius-full:9999px;--ease-out:cubic-bezier(.22,1,.36,1);--ease-spring:cubic-bezier(.34,1.56,.64,1);--max-w:1200px}
 
-/* ── THEMES ── */
-[data-theme="dark"]{--bg-0:#07071a;--bg-1:#0d0d24;--bg-2:#14142e;--bg-3:#1c1c44;--bg-4:#24245a;--text-0:#f2f2fa;--text-1:#c4c4d8;--text-2:#8888a8;--text-3:#5a5a78;--border-0:rgba(255,255,255,.04);--border-1:rgba(255,255,255,.08);--border-2:rgba(255,255,255,.14);--shadow-card:0 4px 24px rgba(0,0,0,.4);--shadow-hover:0 12px 48px rgba(0,0,0,.55);--accent:#e63946;--accent-glow:rgba(230,57,70,.3);--glass:rgba(12,12,30,.7);--glass-border:rgba(255,255,255,.06);--overlay:rgba(5,5,18,.85)}
-[data-theme="light"]{--bg-0:#f0f2f7;--bg-1:#ffffff;--bg-2:#f7f8fb;--bg-3:#eceef4;--bg-4:#dfe2ea;--text-0:#1a1a2e;--text-1:#3a3a5c;--text-2:#7a7a9a;--text-3:#aaaab8;--border-0:rgba(0,0,0,.04);--border-1:rgba(0,0,0,.08);--border-2:rgba(0,0,0,.14);--shadow-card:0 4px 20px rgba(0,0,0,.08);--shadow-hover:0 12px 40px rgba(0,0,0,.14);--accent:#d62839;--accent-glow:rgba(214,40,57,.2);--glass:rgba(255,255,255,.75);--glass-border:rgba(0,0,0,.06);--overlay:rgba(240,242,247,.85)}
+/* ==========================================================================
+   TOKENS GLOBAIS
+   Variáveis reutilizáveis de cores, fontes, bordas, transições e dimensões.
+   Centralizar esses valores facilita manutenção e padronização visual.
+   ========================================================================== */
+:root {
+  /* Cores dos tipos de Pokémon */
+  --type-normal: #9da0aa;
+  --type-fire: #fd7d24;
+  --type-water: #4592c4;
+  --type-electric: #eed535;
+  --type-grass: #9bcc50;
+  --type-ice: #51c4e7;
+  --type-fighting: #d56723;
+  --type-poison: #b97fc9;
+  --type-ground: #ab9842;
+  --type-flying: #7da6de;
+  --type-psychic: #f366b9;
+  --type-bug: #729f3f;
+  --type-rock: #a38c21;
+  --type-ghost: #7b62a3;
+  --type-dragon: #7038f8;
+  --type-dark: #707070;
+  --type-steel: #9eb7b8;
+  --type-fairy: #fdb9e9;
 
-/* ── RESET ── */
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
-body{font-family:var(--font-body);color:var(--text-0);background:var(--bg-0);line-height:1.6;overflow-x:hidden;min-height:100vh;transition:background 1.5s ease,color 1s ease}
-ul,ol{list-style:none}a{color:var(--accent);text-decoration:none}img{display:block;max-width:100%}button{font-family:inherit;border:none;cursor:pointer;background:none;color:inherit}select,input{font-family:inherit}.hidden{display:none!important}.muted{color:var(--text-2);font-size:.85rem}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg-1)}::-webkit-scrollbar-thumb{background:var(--bg-3);border-radius:var(--radius-full)}
-.particles-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.4}
-.confetti-canvas{position:fixed;inset:0;z-index:9999;pointer-events:none}
+  /* Cores por raridade */
+  --rarity-common: #9da0aa;
+  --rarity-uncommon: #4caf50;
+  --rarity-rare: #2196f3;
+  --rarity-epic: #9c27b0;
+  --rarity-legendary: #ff9800;
+  --rarity-mythic: #e91e63;
 
-/* ── SPLASH SCREEN ── */
-.splash{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:var(--bg-0);transition:opacity .6s ease,visibility .6s ease}
-.splash--hide{opacity:0;visibility:hidden;pointer-events:none}
-.splash__content{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:20px}
-.splash__pokeball{width:80px;height:80px;border-radius:50%;position:relative;overflow:hidden;border:4px solid var(--border-2);animation:splashSpin 2s linear infinite}
-.splash__pokeball-top{position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,#ff4444,#cc3333)}
-.splash__pokeball-bottom{position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(180deg,#f0f0f0,#ccc)}
-.splash__pokeball-band{position:absolute;top:50%;left:0;right:0;height:6px;transform:translateY(-50%);background:#333;z-index:2;display:flex;align-items:center;justify-content:center}
-.splash__pokeball-btn{width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid #333}
-.splash__title{font-family:var(--font-display);font-size:2rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--text-0));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
-.splash__subtitle{font-size:.8rem;color:var(--text-2);text-transform:uppercase;letter-spacing:.2em;font-weight:500;margin-top:-8px}
-.splash__bar-wrap{width:220px;height:6px;background:var(--bg-3);border-radius:var(--radius-full);overflow:hidden}
-.splash__bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--rarity-legendary));border-radius:var(--radius-full);transition:width .3s ease}
-.splash__status{font-size:.78rem;color:var(--text-2);min-height:1.2em;transition:opacity .2s ease}
-@keyframes splashSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+  /* Cores de atributos do Pokémon */
+  --stat-hp: #ff5959;
+  --stat-atk: #f5ac78;
+  --stat-def: #fae078;
+  --stat-spa: #9db7f5;
+  --stat-spd: #a7db8d;
+  --stat-vel: #fa92b2;
 
-/* ── TOPBAR ── */
-.topbar{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);transition:background 1.5s ease}
-.topbar__inner{max-width:var(--max-w);margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;gap:14px}
-.topbar__brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
-.topbar__title{font-family:var(--font-display);font-size:1.3rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--text-0));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
-.topbar__tagline{font-size:.6rem;color:var(--text-2);text-transform:uppercase;letter-spacing:.15em;font-weight:500}
-.topbar__wallet{display:flex;align-items:center;gap:10px;margin-left:auto}
-.topbar__resource{display:flex;align-items:center;gap:5px;background:var(--bg-2);padding:5px 12px;border-radius:var(--radius-full);border:1px solid var(--border-1);font-size:.85rem}
-.topbar__resource--dust{border-color:color-mix(in srgb,var(--rarity-legendary) 25%,transparent)}
-.res-val{font-family:var(--font-display);font-weight:700;color:var(--text-0);font-variant-numeric:tabular-nums}
-.res-lbl{font-size:.6rem;color:var(--text-2);font-weight:600}
-.topbar__daily{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--radius-full);background:linear-gradient(135deg,#ff9800,#ff5722);color:#fff;font-size:.72rem;font-weight:600;transition:transform .2s var(--ease-spring);animation:dailyPulse 2s ease-in-out infinite}
-.topbar__daily:hover{transform:scale(1.05)}.topbar__daily.used{background:var(--bg-3);color:var(--text-2);animation:none}
-.pokeball-mini{width:30px;height:30px;border-radius:50%;position:relative;overflow:hidden;border:2px solid var(--border-2);flex-shrink:0}
-.pokeball-mini__top{position:absolute;top:0;left:0;right:0;height:50%;background:var(--accent)}
-.pokeball-mini__bottom{position:absolute;bottom:0;left:0;right:0;height:50%;background:var(--text-0)}
-.pokeball-mini__band{position:absolute;top:50%;left:0;right:0;height:4px;transform:translateY(-50%);background:rgba(0,0,0,.3);z-index:2;display:flex;align-items:center;justify-content:center}
-.pokeball-mini__btn{width:8px;height:8px;border-radius:50%;background:#fff;border:2px solid rgba(0,0,0,.3)}
+  /* Fontes principais do projeto */
+  --font-display: 'Chakra Petch', sans-serif;
+  --font-body: 'Lexend', sans-serif;
 
-/* ── CLOCK BAR ── */
-.clock-bar{position:sticky;top:64px;z-index:95;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--glass-border);transition:background 1.5s ease}
-.clock-bar__inner{max-width:var(--max-w);margin:0 auto;padding:6px 20px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:.78rem}
-.clock__icon{font-size:1rem;transition:all .3s ease}
-.clock__time{font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--text-0);font-variant-numeric:tabular-nums;min-width:50px;text-align:center}
-.clock__day{font-weight:600;color:var(--text-2);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}
-.clock__progress{width:120px;height:4px;background:var(--bg-3);border-radius:var(--radius-full);overflow:hidden}
-.clock__fill{height:100%;background:linear-gradient(90deg,#1a237e,#ff9800,#ff5722,#1a237e);background-size:200% 100%;border-radius:var(--radius-full);transition:width .5s linear}
-.clock__speed{display:flex;align-items:center;gap:6px;margin-left:8px}
-.clock__speed-label{font-size:.8rem;cursor:default}
-.clock__speed-slider{-webkit-appearance:none;appearance:none;width:70px;height:4px;background:var(--bg-3);border-radius:var(--radius-full);outline:none;cursor:pointer;transition:background .2s ease}
-.clock__speed-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg-0);box-shadow:0 0 6px var(--accent-glow);transition:transform .15s var(--ease-spring)}
-.clock__speed-slider::-webkit-slider-thumb:hover{transform:scale(1.2)}
-.clock__speed-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg-0)}
-.clock__speed-val{font-family:var(--font-display);font-size:.7rem;font-weight:700;color:var(--accent);min-width:28px}
+  /* Raios de borda padronizados */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
 
-/* ── NAV ── */
-.nav{position:sticky;top:98px;z-index:90;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-border);display:flex;justify-content:center;gap:2px;padding:6px 16px}
-.nav__item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 16px;border-radius:var(--radius-md);font-size:.62rem;font-weight:600;color:var(--text-2);transition:all .25s ease;position:relative}
-.nav__item svg{width:18px;height:18px}.nav__item:hover{color:var(--text-0);background:var(--bg-2)}
-.nav__item--active{color:var(--accent);background:var(--bg-2)}
-.nav__item--active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:3px;border-radius:2px;background:var(--accent)}
+  /* Curvas de animação personalizadas */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
 
-/* ── MAIN ── */
-.main{position:relative;z-index:1;max-width:var(--max-w);margin:0 auto;padding:24px 20px 40px;min-height:60vh}
-.view{display:none}.view--active{display:block;animation:fadeUp .4s var(--ease-out)}
-.stitle{font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--text-1);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.stitle small{font-weight:400;color:var(--text-2);font-size:.75rem}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:var(--radius-full);font-size:.85rem;font-weight:600;transition:all .25s var(--ease-out)}
-.btn--primary{background:var(--accent);color:#fff}.btn--primary:hover{filter:brightness(1.15);transform:translateY(-2px)}
-.btn--primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.btn--ghost{background:transparent;color:var(--text-1);border:1px solid var(--border-1)}
-.btn--lg{padding:16px 32px;font-size:1rem}
-.sel{padding:6px 12px;border-radius:var(--radius-sm);background:var(--bg-2);color:var(--text-0);border:1px solid var(--border-1);font-size:.8rem;font-weight:500;outline:none;cursor:pointer}
-.sel option{background:var(--bg-1);color:var(--text-0)}
+  /* Largura máxima do conteúdo principal */
+  --max-w: 1200px;
+}
 
-/* ── DASHBOARD ── */
-.dashboard{display:flex;flex-direction:column;gap:28px;align-items:center}
-.dash-welcome{text-align:center}
-.dash-welcome h2{font-family:var(--font-display);font-size:1.6rem;font-weight:700}
-.dash-welcome p{color:var(--text-2);font-size:.9rem}
-.dash-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;width:100%;max-width:960px}
-.dash-section{width:100%;max-width:960px}
-.scard{background:var(--bg-1);border:1px solid var(--border-1);border-radius:var(--radius-md);padding:16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;transition:transform .25s var(--ease-spring),box-shadow .25s ease,background 1.5s ease}
-.scard:hover{transform:translateY(-3px);box-shadow:var(--shadow-card)}
-.scard--accent{border-color:color-mix(in srgb,var(--accent) 30%,transparent);background:color-mix(in srgb,var(--accent) 5%,var(--bg-1))}
-.scard__icon{font-size:1.4rem;margin-bottom:4px}.scard__val{font-family:var(--font-display);font-size:1.5rem;font-weight:700;line-height:1;color:var(--text-0)}.scard__lbl{font-size:.65rem;color:var(--text-2);font-weight:500;text-transform:uppercase;letter-spacing:.06em}.scard__sub{font-size:.7rem;color:var(--text-3);font-weight:600}
-.rarity-progress{display:flex;flex-direction:column;gap:10px}
-.rbar{display:grid;grid-template-columns:100px 40px 1fr;align-items:center;gap:10px;font-size:.78rem}
-.rbar__label{font-weight:600;color:var(--text-1);display:flex;align-items:center;gap:6px}
-.rbar__dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.rbar__count{font-weight:700;color:var(--text-0);text-align:right;font-variant-numeric:tabular-nums}
-.rbar__track{height:8px;background:var(--bg-3);border-radius:var(--radius-full);overflow:hidden}
-.rbar__fill{height:100%;border-radius:var(--radius-full);transition:width .8s var(--ease-out)}
 
-/* Recent Cards — centered, better layout */
-.recent-cards{display:flex;gap:12px;overflow-x:auto;padding:8px 0 12px;scrollbar-width:none;justify-content:center;flex-wrap:wrap}
-.recent-cards::-webkit-scrollbar{display:none}
+/* ==========================================================================
+   TEMAS
+   Define as variações de cor para modo escuro e claro.
+   A troca é feita com o atributo data-theme no elemento HTML.
+   ========================================================================== */
+[data-theme="dark"] {
+  --bg-0: #07071a;
+  --bg-1: #0d0d24;
+  --bg-2: #14142e;
+  --bg-3: #1c1c44;
+  --bg-4: #24245a;
 
-.cta-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:360px;padding:16px;border-radius:var(--radius-full);background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#000));color:#fff;font-family:var(--font-display);font-size:1rem;font-weight:700;transition:all .3s var(--ease-spring);box-shadow:0 4px 20px var(--accent-glow)}
-.cta-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 30px var(--accent-glow)}
+  --text-0: #f2f2fa;
+  --text-1: #c4c4d8;
+  --text-2: #8888a8;
+  --text-3: #5a5a78;
 
-/* ── GACHA ── */
-.gacha{display:flex;flex-direction:column;align-items:center;gap:30px}
-.gacha__stage{width:100%;min-height:380px;display:flex;align-items:center;justify-content:center;position:relative}
-.gacha__idle,.gacha__pulling,.gacha__result,.gacha__multi{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
-.gacha__hint{color:var(--text-2);font-size:.85rem;animation:fadeUp .6s var(--ease-out)}
-.pokeball-big-wrap{position:relative;display:flex;flex-direction:column;align-items:center;padding:20px}
-.pokeball-big{width:140px;height:140px;border-radius:50%;position:relative;overflow:hidden;border:4px solid var(--border-2);transition:all .4s ease;cursor:pointer}
-.pokeball-big__top{position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,#ff4444,#cc3333)}
-.pokeball-big__bottom{position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(180deg,#f0f0f0,#ccc)}
-.pokeball-big__band{position:absolute;top:50%;left:0;right:0;height:10px;transform:translateY(-50%);background:#333;z-index:2;display:flex;align-items:center;justify-content:center}
-.pokeball-big__btn{width:24px;height:24px;border-radius:50%;background:#fff;border:4px solid #333;z-index:3;transition:all .3s ease}
-.pokeball-big__btn--pulse{animation:btnPulse 1s ease-in-out infinite}
-.pokeball-big__shine{position:absolute;top:10%;left:15%;width:30%;height:20%;background:rgba(255,255,255,.3);border-radius:50%;transform:rotate(-30deg);z-index:4}
-.pokeball-big:hover{transform:scale(1.05)}
-.pokeball-big--glow{box-shadow:0 0 40px var(--accent-glow),0 0 80px var(--accent-glow);border-color:var(--accent)}
-.pokeball-big-wrap--shake{animation:pokeShake .6s ease-in-out infinite}
+  --border-0: rgba(255, 255, 255, .04);
+  --border-1: rgba(255, 255, 255, .08);
+  --border-2: rgba(255, 255, 255, .14);
 
-/* FIXED POKEBALL SHADOW */
-.pokeball-shadow{width:120px;height:20px;background:radial-gradient(ellipse at center,rgba(0,0,0,.3) 0%,rgba(0,0,0,.1) 50%,transparent 70%);border-radius:50%;margin-top:12px;filter:blur(2px)}
-.pokeball-shadow--glow{background:radial-gradient(ellipse at center,rgba(230,57,70,.25) 0%,rgba(230,57,70,.08) 50%,transparent 70%);animation:shadowPulse 1s ease-in-out infinite}
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, .4);
+  --shadow-hover: 0 12px 48px rgba(0, 0, 0, .55);
 
-.gacha__result-glow{position:absolute;width:300px;height:300px;border-radius:50%;filter:blur(80px);opacity:.4;z-index:0;animation:glowPulse 2s ease-in-out infinite}
-.gacha__result-card{z-index:2;animation:cardReveal .8s var(--ease-spring)}
-.gacha__result-info{text-align:center;z-index:2;animation:fadeUp .6s var(--ease-out) .3s both}
-.gacha__result-info h3{font-family:var(--font-display);font-size:1.2rem;font-weight:700;text-transform:capitalize}
-.gacha__result-info p{color:var(--text-2);font-size:.8rem}
-.gacha__result-actions{display:flex;gap:10px;z-index:2;animation:fadeUp .6s var(--ease-out) .5s both}
-.gacha__multi-cards{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;z-index:2}
-.gacha__controls{width:100%;max-width:500px;display:flex;flex-direction:column;align-items:center;gap:16px}
-.gacha__rates-btn{font-size:.75rem;color:var(--text-2);padding:6px 14px;border-radius:var(--radius-full);border:1px solid var(--border-1);transition:all .2s ease}
-.gacha__rates-btn:hover{background:var(--bg-2)}
-.gacha__rates{background:var(--bg-1);border:1px solid var(--border-1);border-radius:var(--radius-md);padding:12px 16px;width:100%;animation:fadeUp .3s var(--ease-out)}
-.rate{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:.8rem;color:var(--text-1)}
-.rate span:last-child{margin-left:auto;font-weight:700;color:var(--text-0)}
-.rdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.rdot--common{background:var(--rarity-common)}.rdot--uncommon{background:var(--rarity-uncommon)}.rdot--rare{background:var(--rarity-rare)}.rdot--epic{background:var(--rarity-epic)}.rdot--legendary{background:var(--rarity-legendary)}.rdot--mythic{background:var(--rarity-mythic)}
-.gacha__btns{display:flex;gap:10px;width:100%;flex-wrap:wrap;justify-content:center}
-.pull-btn{position:relative;flex:1;min-width:140px;padding:16px;border-radius:var(--radius-lg);background:var(--bg-1);border:2px solid var(--border-1);transition:all .3s var(--ease-spring);overflow:hidden}
-.pull-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:var(--border-2)}
-.pull-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.pull-btn__inner{display:flex;flex-direction:column;align-items:center;gap:4px}
-.pull-btn__icon{font-size:1.5rem}.pull-btn__label{font-family:var(--font-display);font-weight:700;font-size:.9rem}
-.pull-btn__cost{font-size:.72rem;color:var(--text-2);font-weight:600}
-.pull-btn__badge{position:absolute;top:6px;right:6px;padding:2px 8px;border-radius:var(--radius-full);background:var(--rarity-uncommon);color:#fff;font-size:.6rem;font-weight:700}
-.pull-btn--multi{border-color:color-mix(in srgb,var(--rarity-epic) 30%,transparent)}
-.pull-btn--free{border-color:color-mix(in srgb,var(--rarity-legendary) 30%,transparent)}
-.pull-btn--free:not(:disabled) .pull-btn__cost{color:var(--rarity-legendary)}
+  --accent: #e63946;
+  --accent-glow: rgba(230, 57, 70, .3);
 
-/* ── GAME CARD ── */
-.game-card{position:relative;width:160px;background:var(--bg-1);border-radius:var(--radius-md);overflow:hidden;cursor:pointer;transition:transform .35s var(--ease-spring),box-shadow .35s ease;transform-style:preserve-3d;perspective:800px;flex-shrink:0}
-.game-card:hover{transform:translateY(-8px) rotateX(2deg);box-shadow:var(--shadow-hover)}
-.game-card--sm{width:120px}
-.game-card--sm .game-card__img-wrap{height:85px}
-.game-card--sm .game-card__img{width:68px;height:68px}
-.game-card--sm .game-card__name{font-size:.72rem}
-.game-card--sm .game-card__meta{padding:6px 8px 8px}
-.game-card--sm .type-pip{font-size:.5rem;padding:1px 6px}
-.game-card--common{border:2px solid var(--rarity-common)}
-.game-card--uncommon{border:2px solid var(--rarity-uncommon)}
-.game-card--rare{border:2px solid var(--rarity-rare);box-shadow:0 0 12px color-mix(in srgb,var(--rarity-rare) 20%,transparent)}
-.game-card--epic{border:2px solid var(--rarity-epic);box-shadow:0 0 16px color-mix(in srgb,var(--rarity-epic) 25%,transparent)}
-.game-card--legendary{border:2px solid var(--rarity-legendary);box-shadow:0 0 20px color-mix(in srgb,var(--rarity-legendary) 30%,transparent)}
-.game-card--mythic{border:2px solid var(--rarity-mythic);box-shadow:0 0 24px color-mix(in srgb,var(--rarity-mythic) 35%,transparent)}
-.game-card--epic::after,.game-card--legendary::after,.game-card--mythic::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 20%,rgba(255,255,255,.08) 40%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.08) 60%,transparent 80%);background-size:200% 200%;z-index:5;pointer-events:none;border-radius:var(--radius-md);animation:holoShimmer 3s linear infinite}
-.game-card--mythic::after{background:linear-gradient(135deg,rgba(255,0,0,.08),rgba(255,165,0,.08),rgba(255,255,0,.08),rgba(0,255,0,.08),rgba(0,0,255,.08),rgba(128,0,128,.08));background-size:300% 300%;animation:rainbowShimmer 4s linear infinite}
-.game-card__header{position:relative;padding:8px 8px 0;display:flex;justify-content:space-between;align-items:flex-start}
-.game-card__number{font-family:var(--font-display);font-size:.6rem;font-weight:700;color:var(--text-3)}
-.game-card__rarity{font-size:.6rem;letter-spacing:-.02em}
-.game-card__fav{position:absolute;top:6px;right:6px;z-index:10;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(0,0,0,.3);backdrop-filter:blur(4px);font-size:.7rem;transition:transform .2s var(--ease-spring)}
-.game-card__fav:hover{transform:scale(1.2)}.game-card__fav--active{background:rgba(255,215,0,.3)}
-.game-card__img-wrap{height:110px;display:flex;align-items:center;justify-content:center;position:relative;padding:4px}
-.game-card__img{width:90px;height:90px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));transition:transform .4s var(--ease-spring);image-rendering:-webkit-optimize-contrast}
-.game-card:hover .game-card__img{transform:scale(1.1) translateY(-4px)}
-.game-card__meta{padding:8px 10px 10px;text-align:center}
-.game-card__name{font-family:var(--font-display);font-size:.82rem;font-weight:700;text-transform:capitalize;margin-bottom:4px;line-height:1.2;color:var(--text-0)}
-.game-card__types{display:flex;justify-content:center;gap:4px;margin-bottom:4px}
-.type-pip{padding:2px 8px;border-radius:var(--radius-full);font-size:.55rem;font-weight:600;color:#fff;text-transform:capitalize;text-shadow:0 1px 2px rgba(0,0,0,.3)}
-.game-card__count{position:absolute;top:6px;left:6px;z-index:10;min-width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-full);background:var(--accent);color:#fff;font-family:var(--font-display);font-size:.65rem;font-weight:700;padding:0 5px}
-.game-card__new{position:absolute;top:36px;right:-20px;z-index:10;padding:2px 24px;font-size:.55rem;font-weight:700;color:#fff;background:var(--rarity-legendary);transform:rotate(45deg);text-transform:uppercase;letter-spacing:.1em}
+  --glass: rgba(12, 12, 30, .7);
+  --glass-border: rgba(255, 255, 255, .06);
+  --overlay: rgba(5, 5, 18, .85);
+}
 
-/* ── COLLECTION ── */
-.collection{display:flex;flex-direction:column;gap:20px}
-.coll-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.coll-search{position:relative;display:flex;align-items:center;flex:1;min-width:200px}
-.coll-search svg{position:absolute;left:12px;width:16px;height:16px;color:var(--text-3);pointer-events:none}
-.coll-search input{width:100%;height:40px;padding:0 16px 0 38px;border-radius:var(--radius-full);background:var(--bg-2);color:var(--text-0);border:1px solid var(--border-1);font-size:.85rem;outline:none;transition:border-color .2s ease}
-.coll-search input:focus{border-color:var(--accent)}.coll-search input::placeholder{color:var(--text-3)}
-.coll-filters{display:flex;gap:8px;flex-wrap:wrap}
-.coll-count{font-size:.75rem;color:var(--text-2);font-weight:600;margin-left:auto;white-space:nowrap}
-.coll-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
-.coll-empty{text-align:center;padding:60px 20px}
-.coll-empty__icon{font-size:3rem;margin-bottom:12px;opacity:.5}
-.coll-empty h3{font-family:var(--font-display);font-size:1.2rem;margin-bottom:6px}
-.coll-empty p{color:var(--text-2);font-size:.85rem;margin-bottom:16px}
+[data-theme="light"] {
+  --bg-0: #f0f2f7;
+  --bg-1: #ffffff;
+  --bg-2: #f7f8fb;
+  --bg-3: #eceef4;
+  --bg-4: #dfe2ea;
 
-/* ── FUSION ── */
-.fusion{display:flex;flex-direction:column;gap:28px}
-.fusion__header{text-align:center}
-.fusion__header h2{font-family:var(--font-display);font-size:1.5rem;font-weight:700}
-.fusion__header p{color:var(--text-2);font-size:.85rem;margin-top:4px}
-.fusion__chamber{display:flex;flex-direction:column;align-items:center;gap:20px;padding:30px;background:var(--bg-1);border:1px solid var(--border-1);border-radius:var(--radius-xl)}
-.fusion__slots{display:flex;align-items:center;gap:12px}
-.fusion__slot{width:120px;height:170px;border-radius:var(--radius-md);border:2px dashed var(--border-2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s ease;overflow:hidden;background:var(--bg-2)}
-.fusion__slot:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 5%,var(--bg-2));transform:scale(1.02)}
-.fusion__slot--filled{border-style:solid}
-.fusion__slot-empty{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text-3)}
-.fusion__slot-empty span{font-size:1.5rem;font-weight:700}
-.fusion__slot-empty small{font-size:.6rem}
-.fusion__plus{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--text-3)}
-.fusion__arrow{color:var(--accent);animation:arrowBounce 2s ease-in-out infinite}
-.fusion__arrow svg{width:32px;height:32px}
-.fusion__result{width:140px;height:190px;border-radius:var(--radius-md);border:2px dashed var(--accent);display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--accent) 3%,var(--bg-2));overflow:hidden}
-.fusion__eligible{margin-top:10px}
-.fusion__elig-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
-.fusion__elig-empty{text-align:center;padding:30px;color:var(--text-2)}
+  --text-0: #1a1a2e;
+  --text-1: #3a3a5c;
+  --text-2: #7a7a9a;
+  --text-3: #aaaab8;
 
-/* ── FUSION PICKER MODAL ── */
-.picker-modal{position:fixed;inset:0;z-index:250;display:flex;align-items:center;justify-content:center;padding:20px}
-.picker-modal__bg{position:absolute;inset:0;background:var(--overlay);backdrop-filter:blur(8px)}
-.picker-modal__body{position:relative;z-index:2;width:100%;max-width:600px;max-height:80vh;overflow-y:auto;background:var(--bg-1);border-radius:var(--radius-xl);border:1px solid var(--border-1);box-shadow:0 24px 80px rgba(0,0,0,.5);animation:modalUp .4s var(--ease-spring);padding:24px}
-.picker-modal__header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.picker-modal__header h3{font-family:var(--font-display);font-size:1.1rem;font-weight:700}
-.picker-modal__close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg-2);border:1px solid var(--border-1);transition:all .2s ease}
-.picker-modal__close:hover{background:var(--bg-3)}.picker-modal__close svg{width:16px;height:16px}
-.picker-modal__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+  --border-0: rgba(0, 0, 0, .04);
+  --border-1: rgba(0, 0, 0, .08);
+  --border-2: rgba(0, 0, 0, .14);
 
-/* ── EVOLVE PAGE ── */
-.evolve{display:flex;flex-direction:column;gap:28px}
-.evolve__header{text-align:center}
-.evolve__header h2{font-family:var(--font-display);font-size:1.5rem;font-weight:700}
-.evolve__header p{color:var(--text-2);font-size:.85rem;margin-top:4px}
-.evolve__cost-table{background:var(--bg-1);border:1px solid var(--border-1);border-radius:var(--radius-md);padding:16px;max-width:400px;margin:0 auto}
-.evo-cost{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:.8rem;color:var(--text-1);border-bottom:1px solid var(--border-0)}
-.evo-cost:last-child{border-bottom:none}
-.evo-cost span:last-child{margin-left:auto;font-weight:700;color:var(--text-0);font-family:var(--font-display)}
-.evolve__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
-.evolve__empty{text-align:center;padding:30px;color:var(--text-2)}
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, .08);
+  --shadow-hover: 0 12px 40px rgba(0, 0, 0, .14);
 
-/* Evolve button on card */
-.game-card__evolve{position:absolute;bottom:6px;right:6px;z-index:10;padding:4px 10px;border-radius:var(--radius-full);background:linear-gradient(135deg,#ff9800,#ff5722);color:#fff;font-size:.6rem;font-weight:700;transition:all .2s var(--ease-spring);box-shadow:0 2px 8px rgba(255,152,0,.3)}
-.game-card__evolve:hover{transform:scale(1.1);box-shadow:0 4px 12px rgba(255,152,0,.4)}
+  --accent: #d62839;
+  --accent-glow: rgba(214, 40, 57, .2);
 
-/* ── CARD MODAL ── */
-.card-modal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
-.card-modal__backdrop{position:absolute;inset:0;background:var(--overlay);backdrop-filter:blur(10px);animation:fadeIn .3s ease}
-.card-modal__body{position:relative;z-index:2;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;background:var(--bg-1);border-radius:var(--radius-xl);border:1px solid var(--border-1);box-shadow:0 24px 80px rgba(0,0,0,.5);animation:modalUp .5s var(--ease-spring)}
-.card-modal__body::-webkit-scrollbar{width:4px}
-.cm-header{position:relative;padding:24px 24px 60px;overflow:hidden}
-.cm-header__bg{position:absolute;inset:0;opacity:.9}.cm-header__bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.5))}
-.cm-header__content{position:relative;z-index:2;color:#fff}
-.cm-header__top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.cm-header__num{font-family:var(--font-display);font-size:.85rem;font-weight:700;opacity:.7}
-.cm-header__close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(0,0,0,.3);backdrop-filter:blur(4px);color:#fff;transition:all .2s ease}
-.cm-header__close:hover{background:rgba(0,0,0,.5);transform:scale(1.1)}.cm-header__close svg{width:16px;height:16px}
-.cm-header__name{font-family:var(--font-display);font-size:1.8rem;font-weight:700;text-transform:capitalize;text-shadow:0 2px 8px rgba(0,0,0,.3);line-height:1.1}
-.cm-header__rarity{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:.75rem;font-weight:600}
-.cm-header__types{display:flex;gap:6px;margin-top:8px}
-.cm-header__types .type-pip{background:rgba(255,255,255,.2);backdrop-filter:blur(4px);font-size:.7rem;padding:3px 12px}
-.cm-header__img{position:absolute;bottom:-10px;right:16px;width:160px;height:160px;z-index:3;object-fit:contain;filter:drop-shadow(0 8px 20px rgba(0,0,0,.4));animation:floatY 3s ease-in-out infinite}
-.cm-body{padding:20px 24px 24px}
-.cm-tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border-0)}
-.cm-tab{padding:8px 14px;font-size:.78rem;font-weight:600;color:var(--text-2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s ease}
-.cm-tab:hover{color:var(--text-1)}.cm-tab--active{color:var(--accent);border-bottom-color:var(--accent)}
-.cm-panel{display:none}.cm-panel--active{display:block;animation:fadeUp .3s var(--ease-out)}
-.cm-stat{display:grid;grid-template-columns:42px 34px 1fr;align-items:center;gap:10px;margin-bottom:10px}
-.cm-stat__label{font-size:.68rem;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.04em}
-.cm-stat__val{font-size:.82rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
-.cm-stat__bar{height:7px;background:var(--bg-3);border-radius:var(--radius-full);overflow:hidden}
-.cm-stat__fill{height:100%;border-radius:var(--radius-full);transition:width .8s var(--ease-out);width:0}
-.cm-total{margin-top:12px;padding-top:12px;border-top:1px solid var(--border-0);display:flex;justify-content:space-between;font-family:var(--font-display);font-weight:700}.cm-total span:last-child{font-size:1.2rem}
-.cm-about-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.cm-about-item{background:var(--bg-2);border-radius:var(--radius-sm);padding:12px}
-.cm-about-item__lbl{font-size:.62rem;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;font-weight:600}
-.cm-about-item__val{font-size:.95rem;font-weight:700}
-.cm-flavor{font-size:.82rem;color:var(--text-1);line-height:1.6;font-style:italic;padding:12px;background:var(--bg-2);border-radius:var(--radius-sm);border-left:3px solid var(--accent)}
-.cm-ability{background:var(--bg-2);border-radius:var(--radius-sm);padding:14px;margin-bottom:8px}
-.cm-ability__head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.cm-ability__name{font-weight:700;text-transform:capitalize;font-size:.88rem}
-.cm-ability__hidden{font-size:.55rem;padding:2px 7px;border-radius:var(--radius-full);background:rgba(230,57,70,.15);color:var(--accent);font-weight:700;text-transform:uppercase}
-.cm-ability__desc{font-size:.78rem;color:var(--text-1);line-height:1.5}
-.cm-nav{display:flex;justify-content:center;padding:0 24px 20px}
-.cm-fav-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-full);font-size:.8rem;font-weight:600;border:1px solid var(--border-1);background:var(--bg-2);transition:all .2s var(--ease-spring)}
-.cm-fav-btn:hover{transform:scale(1.05)}
-.cm-fav-btn--active{background:rgba(255,215,0,.15);border-color:rgba(255,215,0,.3);color:#ffd700}
+  --glass: rgba(255, 255, 255, .75);
+  --glass-border: rgba(0, 0, 0, .06);
+  --overlay: rgba(240, 242, 247, .85);
+}
 
-/* ── RESET MODAL ── */
-.reset-modal{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
-.reset-modal__bg{position:absolute;inset:0;background:var(--overlay);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);animation:fadeIn .3s ease}
-.reset-modal__box{position:relative;z-index:2;width:100%;max-width:380px;background:var(--bg-1);border:1px solid var(--border-1);border-radius:var(--radius-xl);padding:32px 28px 24px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.5);animation:modalUp .4s var(--ease-spring)}
-.reset-modal__icon{font-size:2.5rem;margin-bottom:12px}
-.reset-modal__title{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--text-0);margin-bottom:8px}
-.reset-modal__text{font-size:.85rem;color:var(--text-2);line-height:1.5;margin-bottom:24px}
-.reset-modal__text strong{color:var(--text-0)}
-.reset-modal__actions{display:flex;gap:10px;justify-content:center}
-.reset-modal__btn{padding:10px 24px;border-radius:var(--radius-full);font-size:.85rem;font-weight:600;transition:all .25s var(--ease-out);display:inline-flex;align-items:center;gap:6px}
-.reset-modal__btn--cancel{background:var(--bg-2);color:var(--text-1);border:1px solid var(--border-1)}
-.reset-modal__btn--cancel:hover{background:var(--bg-3);color:var(--text-0)}
-.reset-modal__btn--confirm{background:var(--accent);color:#fff;border:none}
-.reset-modal__btn--confirm:hover{filter:brightness(1.15);transform:translateY(-1px)}
 
-/* ── FOOTER ── */
-.footer{position:relative;z-index:1;border-top:1px solid var(--border-0);background:var(--bg-1);margin-top:40px}
-.footer__inner{max-width:var(--max-w);margin:0 auto;padding:30px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
-.footer__brand{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--text-1)}
-.footer__text{font-size:.82rem;color:var(--text-2)}.footer__text strong{color:var(--text-0);font-weight:600}
-.footer__credits{font-size:.72rem;color:var(--text-3)}
-.footer__links{display:flex;align-items:center;gap:8px;font-size:.72rem;color:var(--text-3);margin-top:4px}
-.footer__reset{font-size:.72rem;color:var(--accent);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:inherit}
+/* ==========================================================================
+   RESET E CONFIGURAÇÕES BASE
+   Remove estilos padrão do navegador e define a base visual da aplicação.
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-/* ── TOAST ── */
-.toast-wrap{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:var(--radius-full);background:var(--bg-1);border:1px solid var(--border-1);box-shadow:0 8px 30px rgba(0,0,0,.3);font-size:.82rem;font-weight:500;color:var(--text-0);animation:toastIn .4s var(--ease-spring);white-space:nowrap;pointer-events:auto;backdrop-filter:blur(10px)}
-.toast--success{border-color:color-mix(in srgb,var(--rarity-uncommon) 30%,transparent)}
-.toast--warning{border-color:color-mix(in srgb,var(--rarity-legendary) 30%,transparent)}
-.toast--error{border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
-.toast--exit{animation:toastOut .3s ease forwards}
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
 
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes modalUp{from{opacity:0;transform:translateY(40px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes cardReveal{from{opacity:0;transform:scale(.5) translateY(40px) rotateY(20deg)}to{opacity:1;transform:scale(1) translateY(0) rotateY(0)}}
-@keyframes pokeShake{0%,100%{transform:translateX(0) rotate(0)}20%{transform:translateX(-10px) rotate(-5deg)}40%{transform:translateX(10px) rotate(5deg)}60%{transform:translateX(-8px) rotate(-3deg)}80%{transform:translateX(8px) rotate(3deg)}}
-@keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 var(--accent-glow)}50%{box-shadow:0 0 20px 8px var(--accent-glow)}}
-@keyframes glowPulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.5;transform:scale(1.1)}}
-@keyframes shadowPulse{0%,100%{opacity:.6}50%{opacity:1}}
-@keyframes dailyPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
-@keyframes arrowBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes holoShimmer{0%{background-position:0% 0%}100%{background-position:200% 200%}}
-@keyframes rainbowShimmer{0%{background-position:0% 0%}100%{background-position:300% 300%}}
-@keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes toastOut{to{opacity:0;transform:translateY(-10px) scale(.9)}}
+body {
+  font-family: var(--font-body);
+  color: var(--text-0);
+  background: var(--bg-0);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+  transition: background 1.5s ease, color 1s ease;
+}
 
-/* ── RESPONSIVE ── */
-@media(max-width:768px){.topbar__inner{gap:8px;padding:0 12px}.topbar__title{font-size:1rem}.topbar__resource{padding:4px 8px;font-size:.75rem}.res-lbl{display:none}.nav{top:98px;gap:0;padding:4px 8px}.nav__item{padding:5px 10px;font-size:.55rem}.nav__item svg{width:16px;height:16px}.main{padding:16px 12px 40px}.dash-stats{grid-template-columns:repeat(3,1fr);gap:8px}.scard{padding:12px 8px}.scard__icon{font-size:1.1rem}.scard__val{font-size:1.2rem}.coll-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.game-card{width:100%}.pull-btn{min-width:100px;padding:12px}.fusion__slots{gap:6px}.fusion__slot{width:90px;height:130px}.fusion__chamber{padding:16px}.card-modal{padding:0;align-items:flex-end}.card-modal__body{max-width:100%;border-radius:var(--radius-xl) var(--radius-xl) 0 0;max-height:95vh}.cm-header__name{font-size:1.4rem}.cm-header__img{width:120px;height:120px}.recent-cards{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto}}
-@media(max-width:480px){.dash-stats{grid-template-columns:repeat(2,1fr)}.coll-grid{grid-template-columns:repeat(2,1fr)}.gacha__btns{flex-direction:column}.pull-btn{min-width:100%}.fusion__slots{flex-wrap:wrap;justify-content:center}.coll-filters{width:100%}.coll-filters .sel{flex:1;min-width:0}.clock-bar__inner{gap:8px;font-size:.7rem}.clock__progress{width:80px}.clock__speed-slider{width:50px}}
+/* Remove marcadores padrão de listas */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Estilo base de links */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* Garante que imagens respeitem o espaço do container */
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* Padroniza aparência de botões */
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  background: none;
+  color: inherit;
+}
+
+/* Mantém inputs e selects com a mesma tipografia */
+select,
+input {
+  font-family: inherit;
+}
+
+/* Classe utilitária para ocultar elementos via CSS */
+.hidden {
+  display: none !important;
+}
+
+/* Classe utilitária para textos secundários */
+.muted {
+  color: var(--text-2);
+  font-size: .85rem;
+}
+
+/* Personalização da barra de rolagem */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-3);
+  border-radius: var(--radius-full);
+}
+
+/* Canvas fixo usado para partículas decorativas */
+.particles-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .4;
+}
+
+/* Canvas de confetes exibido acima da interface */
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+
+/* ==========================================================================
+   SPLASH SCREEN
+   Tela de carregamento inicial exibida antes da aplicação principal.
+   ========================================================================== */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-0);
+  transition: opacity .6s ease, visibility .6s ease;
+}
+
+/* Estado de saída da splash screen */
+.splash--hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Estrutura visual da pokébola do loading */
+.splash__pokeball {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  border: 4px solid var(--border-2);
+  animation: splashSpin 2s linear infinite;
+}
+
+.splash__pokeball-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, #ff4444, #cc3333);
+}
+
+.splash__pokeball-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, #f0f0f0, #ccc);
+}
+
+.splash__pokeball-band {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 6px;
+  transform: translateY(-50%);
+  background: #333;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.splash__pokeball-btn {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #333;
+}
+
+.splash__title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--text-0));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+}
+
+.splash__subtitle {
+  font-size: .8rem;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  font-weight: 500;
+  margin-top: -8px;
+}
+
+.splash__bar-wrap {
+  width: 220px;
+  height: 6px;
+  background: var(--bg-3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+/* Barra que cresce dinamicamente conforme o carregamento */
+.splash__bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--rarity-legendary));
+  border-radius: var(--radius-full);
+  transition: width .3s ease;
+}
+
+.splash__status {
+  font-size: .78rem;
+  color: var(--text-2);
+  min-height: 1.2em;
+  transition: opacity .2s ease;
+}
+
+@keyframes splashSpin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+/* ==========================================================================
+   TOPBAR
+   Barra superior fixa com identidade do jogo e recursos do usuário.
+   ========================================================================== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: background 1.5s ease;
+}
+
+.topbar__inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.topbar__title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--text-0));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+}
+
+.topbar__tagline {
+  font-size: .6rem;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  font-weight: 500;
+}
+
+.topbar__wallet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.topbar__resource {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-2);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-1);
+  font-size: .85rem;
+}
+
+/* Destaque visual do recurso Stardust */
+.topbar__resource--dust {
+  border-color: color-mix(in srgb, var(--rarity-legendary) 25%, transparent);
+}
+
+.res-val {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text-0);
+  font-variant-numeric: tabular-nums;
+}
+
+.res-lbl {
+  font-size: .6rem;
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+/* Botão da recompensa diária */
+.topbar__daily {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #ff9800, #ff5722);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 600;
+  transition: transform .2s var(--ease-spring);
+  animation: dailyPulse 2s ease-in-out infinite;
+}
+
+.topbar__daily:hover {
+  transform: scale(1.05);
+}
+
+/* Estado do botão quando a recompensa já foi usada */
+.topbar__daily.used {
+  background: var(--bg-3);
+  color: var(--text-2);
+  animation: none;
+}
+
+/* Ícone pequeno de pokébola da marca */
+.pokeball-mini {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--border-2);
+  flex-shrink: 0;
+}
+
+.pokeball-mini__top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: var(--accent);
+}
+
+.pokeball-mini__bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: var(--text-0);
+}
+
+.pokeball-mini__band {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, .3);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pokeball-mini__btn {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid rgba(0, 0, 0, .3);
+}
+
+
+/* ==========================================================================
+   CLOCK BAR
+   Barra fixa abaixo do topo com relógio, dia e controle de velocidade.
+   ========================================================================== */
+.clock-bar {
+  position: sticky;
+  top: 64px;
+  z-index: 95;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: background 1.5s ease;
+}
+
+.clock-bar__inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 6px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: .78rem;
+}
+
+.clock__icon {
+  font-size: 1rem;
+  transition: all .3s ease;
+}
+
+.clock__time {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-0);
+  font-variant-numeric: tabular-nums;
+  min-width: 50px;
+  text-align: center;
+}
+
+.clock__day {
+  font-weight: 600;
+  color: var(--text-2);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.clock__progress {
+  width: 120px;
+  height: 4px;
+  background: var(--bg-3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+/* Barra que representa o avanço do ciclo do tempo */
+.clock__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1a237e, #ff9800, #ff5722, #1a237e);
+  background-size: 200% 100%;
+  border-radius: var(--radius-full);
+  transition: width .5s linear;
+}
+
+.clock__speed {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+}
+
+.clock__speed-label {
+  font-size: .8rem;
+  cursor: default;
+}
+
+.clock__speed-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 70px;
+  height: 4px;
+  background: var(--bg-3);
+  border-radius: var(--radius-full);
+  outline: none;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+.clock__speed-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg-0);
+  box-shadow: 0 0 6px var(--accent-glow);
+  transition: transform .15s var(--ease-spring);
+}
+
+.clock__speed-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.clock__speed-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg-0);
+}
+
+.clock__speed-val {
+  font-family: var(--font-display);
+  font-size: .7rem;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 28px;
+}
+
+
+/* ==========================================================================
+   NAVEGAÇÃO PRINCIPAL
+   Menu das views do sistema.
+   ========================================================================== */
+.nav {
+  position: sticky;
+  top: 98px;
+  z-index: 90;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 16px;
+}
+
+.nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 16px;
+  border-radius: var(--radius-md);
+  font-size: .62rem;
+  font-weight: 600;
+  color: var(--text-2);
+  transition: all .25s ease;
+  position: relative;
+}
+
+.nav__item svg {
+  width: 18px;
+  height: 18px;
+}
+
+.nav__item:hover {
+  color: var(--text-0);
+  background: var(--bg-2);
+}
+
+/* Estado visual do item de navegação ativo */
+.nav__item--active {
+  color: var(--accent);
+  background: var(--bg-2);
+}
+
+.nav__item--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+
+/* ==========================================================================
+   ESTRUTURA PRINCIPAL
+   Define área central das views e componentes utilitários gerais.
+   ========================================================================== */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  min-height: 60vh;
+}
+
+/* Por padrão, as views ficam ocultas */
+.view {
+  display: none;
+}
+
+/* View visível no momento */
+.view--active {
+  display: block;
+  animation: fadeUp .4s var(--ease-out);
+}
+
+.stitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stitle small {
+  font-weight: 400;
+  color: var(--text-2);
+  font-size: .75rem;
+}
+
+/* Botões genéricos reutilizáveis */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  font-size: .85rem;
+  font-weight: 600;
+  transition: all .25s var(--ease-out);
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+
+.btn--primary:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-1);
+  border: 1px solid var(--border-1);
+}
+
+.btn--lg {
+  padding: 16px 32px;
+  font-size: 1rem;
+}
+
+/* Estilo base dos selects */
+.sel {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-2);
+  color: var(--text-0);
+  border: 1px solid var(--border-1);
+  font-size: .8rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+}
+
+.sel option {
+  background: var(--bg-1);
+  color: var(--text-0);
+}
+
+
+/* ==========================================================================
+   DASHBOARD
+   Tela inicial com estatísticas, progresso e atalhos.
+   ========================================================================== */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  align-items: center;
+}
+
+.dash-welcome {
+  text-align: center;
+}
+
+.dash-welcome h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.dash-welcome p {
+  color: var(--text-2);
+  font-size: .9rem;
+}
+
+/* Grade de cards com estatísticas resumidas */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 960px;
+}
+
+.dash-section {
+  width: 100%;
+  max-width: 960px;
+}
+
+.scard {
+  background: var(--bg-1);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+  transition: transform .25s var(--ease-spring), box-shadow .25s ease, background 1.5s ease;
+}
+
+.scard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+}
+
+/* Card com destaque visual especial */
+.scard--accent {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg-1));
+}
+
+.scard__icon {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+
+.scard__val {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-0);
+}
+
+.scard__lbl {
+  font-size: .65rem;
+  color: var(--text-2);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.scard__sub {
+  font-size: .7rem;
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+/* Área de progresso por raridade */
+.rarity-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rbar {
+  display: grid;
+  grid-template-columns: 100px 40px 1fr;
+  align-items: center;
+  gap: 10px;
+  font-size: .78rem;
+}
+
+.rbar__label {
+  font-weight: 600;
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rbar__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rbar__count {
+  font-weight: 700;
+  color: var(--text-0);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.rbar__track {
+  height: 8px;
+  background: var(--bg-3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+/* Preenchimento animado da barra de progresso */
+.rbar__fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width .8s var(--ease-out);
+}
+
+/* Lista de cartas recentes */
+.recent-cards {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 8px 0 12px;
+  scrollbar-width: none;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.recent-cards::-webkit-scrollbar {
+  display: none;
+}
+
+/* Botão de ação principal do dashboard */
+.cta-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+  padding: 16px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 70%, #000)
+  );
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  transition: all .3s var(--ease-spring);
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.cta-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 30px var(--accent-glow);
+}
+
+
+/* ==========================================================================
+   GACHA
+   Área principal de abertura de cartas e exibição de resultados.
+   ========================================================================== */
+.gacha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.gacha__stage {
+  width: 100%;
+  min-height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.gacha__idle,
+.gacha__pulling,
+.gacha__result,
+.gacha__multi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.gacha__hint {
+  color: var(--text-2);
+  font-size: .85rem;
+  animation: fadeUp .6s var(--ease-out);
+}
+
+.pokeball-big-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Pokébola principal da tela de gacha */
+.pokeball-big {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  border: 4px solid var(--border-2);
+  transition: all .4s ease;
+  cursor: pointer;
+}
+
+.pokeball-big__top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, #ff4444, #cc3333);
+}
+
+.pokeball-big__bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, #f0f0f0, #ccc);
+}
+
+.pokeball-big__band {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  transform: translateY(-50%);
+  background: #333;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pokeball-big__btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  border: 4px solid #333;
+  z-index: 3;
+  transition: all .3s ease;
+}
+
+/* Estado pulsante do botão da pokébola durante a animação */
+.pokeball-big__btn--pulse {
+  animation: btnPulse 1s ease-in-out infinite;
+}
+
+.pokeball-big__shine {
+  position: absolute;
+  top: 10%;
+  left: 15%;
+  width: 30%;
+  height: 20%;
+  background: rgba(255, 255, 255, .3);
+  border-radius: 50%;
+  transform: rotate(-30deg);
+  z-index: 4;
+}
+
+.pokeball-big:hover {
+  transform: scale(1.05);
+}
+
+/* Efeito de brilho da pokébola ao abrir cartas */
+.pokeball-big--glow {
+  box-shadow: 0 0 40px var(--accent-glow), 0 0 80px var(--accent-glow);
+  border-color: var(--accent);
+}
+
+/* Estado de tremor durante a abertura */
+.pokeball-big-wrap--shake {
+  animation: pokeShake .6s ease-in-out infinite;
+}
+
+/* Sombra inferior da pokébola */
+.pokeball-shadow {
+  width: 120px;
+  height: 20px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, .3) 0%,
+    rgba(0, 0, 0, .1) 50%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  margin-top: 12px;
+  filter: blur(2px);
+}
+
+/* Sombra iluminada em estados especiais */
+.pokeball-shadow--glow {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(230, 57, 70, .25) 0%,
+    rgba(230, 57, 70, .08) 50%,
+    transparent 70%
+  );
+  animation: shadowPulse 1s ease-in-out infinite;
+}
+
+/* Halo de brilho do resultado obtido */
+.gacha__result-glow {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: .4;
+  z-index: 0;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+.gacha__result-card {
+  z-index: 2;
+  animation: cardReveal .8s var(--ease-spring);
+}
+
+.gacha__result-info {
+  text-align: center;
+  z-index: 2;
+  animation: fadeUp .6s var(--ease-out) .3s both;
+}
+
+.gacha__result-info h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.gacha__result-info p {
+  color: var(--text-2);
+  font-size: .8rem;
+}
+
+.gacha__result-actions {
+  display: flex;
+  gap: 10px;
+  z-index: 2;
+  animation: fadeUp .6s var(--ease-out) .5s both;
+}
+
+/* Grupo de cartas exibidas na abertura múltipla */
+.gacha__multi-cards {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  z-index: 2;
+}
+
+.gacha__controls {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.gacha__rates-btn {
+  font-size: .75rem;
+  color: var(--text-2);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-1);
+  transition: all .2s ease;
+}
+
+.gacha__rates-btn:hover {
+  background: var(--bg-2);
+}
+
+/* Painel com probabilidades do gacha */
+.gacha__rates {
+  background: var(--bg-1);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  width: 100%;
+  animation: fadeUp .3s var(--ease-out);
+}
+
+.rate {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: .8rem;
+  color: var(--text-1);
+}
+
+.rate span:last-child {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--text-0);
+}
+
+/* Indicador de cor para raridade */
+.rdot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rdot--common     { background: var(--rarity-common); }
+.rdot--uncommon   { background: var(--rarity-uncommon); }
+.rdot--rare       { background: var(--rarity-rare); }
+.rdot--epic       { background: var(--rarity-epic); }
+.rdot--legendary  { background: var(--rarity-legendary); }
+.rdot--mythic     { background: var(--rarity-mythic); }
+
+.gacha__btns {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Botões de compra/abertura de packs */
+.pull-btn {
+  position: relative;
+  flex: 1;
+  min-width: 140px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-1);
+  border: 2px solid var(--border-1);
+  transition: all .3s var(--ease-spring);
+  overflow: hidden;
+}
+
+.pull-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--border-2);
+}
+
+.pull-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pull-btn__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pull-btn__icon {
+  font-size: 1.5rem;
+}
+
+.pull-btn__label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: .9rem;
+}
+
+.pull-btn__cost {
+  font-size: .72rem;
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+/* Selo de desconto exibido no pack múltiplo */
+.pull-btn__badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--rarity-uncommon);
+  color: #fff;
+  font-size: .6rem;
+  font-weight: 700;
+}
+
+.pull-btn--multi {
+  border-color: color-mix(in srgb, var(--rarity-epic) 30%, transparent);
+}
+
+.pull-btn--free {
+  border-color: color-mix(in srgb, var(--rarity-legendary) 30%, transparent);
+}
+
+.pull-btn--free:not(:disabled) .pull-btn__cost {
+  color: var(--rarity-legendary);
+}
+
+
+/* ==========================================================================
+   GAME CARD
+   Componente base das cartas exibidas em coleção, gacha, fusão e evolução.
+   ========================================================================== */
+.game-card {
+  position: relative;
+  width: 160px;
+  background: var(--bg-1);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .35s var(--ease-spring), box-shadow .35s ease;
+  transform-style: preserve-3d;
+  perspective: 800px;
+  flex-shrink: 0;
+}
+
+.game-card:hover {
+  transform: translateY(-8px) rotateX(2deg);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Variante menor usada em contextos compactos */
+.game-card--sm {
+  width: 120px;
+}
+
+.game-card--sm .game-card__img-wrap {
+  height: 85px;
+}
+
+.game-card--sm .game-card__img {
+  width: 68px;
+  height: 68px;
+}
+
+.game-card--sm .game-card__name {
+  font-size: .72rem;
+}
+
+.game-card--sm .game-card__meta {
+  padding: 6px 8px 8px;
+}
+
+.game-card--sm .type-pip {
+  font-size: .5rem;
+  padding: 1px 6px;
+}
+
+/* Borda e brilho variam conforme a raridade da carta */
+.game-card--common {
+  border: 2px solid var(--rarity-common);
+}
+
+.game-card--uncommon {
+  border: 2px solid var(--rarity-uncommon);
+}
+
+.game-card--rare {
+  border: 2px solid var(--rarity-rare);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--rarity-rare) 20%, transparent);
+}
+
+.game-card--epic {
+  border: 2px solid var(--rarity-epic);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--rarity-epic) 25%, transparent);
+}
+
+.game-card--legendary {
+  border: 2px solid var(--rarity-legendary);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--rarity-legendary) 30%, transparent);
+}
+
+.game-card--mythic {
+  border: 2px solid var(--rarity-mythic);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--rarity-mythic) 35%, transparent);
+}
+
+/* Efeito holográfico em cartas mais raras */
+.game-card--epic::after,
+.game-card--legendary::after,
+.game-card--mythic::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 20%,
+    rgba(255, 255, 255, .08) 40%,
+    rgba(255, 255, 255, .15) 50%,
+    rgba(255, 255, 255, .08) 60%,
+    transparent 80%
+  );
+  background-size: 200% 200%;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: var(--radius-md);
+  animation: holoShimmer 3s linear infinite;
+}
+
+/* Efeito especial para cartas míticas */
+.game-card--mythic::after {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 0, 0, .08),
+    rgba(255, 165, 0, .08),
+    rgba(255, 255, 0, .08),
+    rgba(0, 255, 0, .08),
+    rgba(0, 0, 255, .08),
+    rgba(128, 0, 128, .08)
+  );
+  background-size: 300% 300%;
+  animation: rainbowShimmer 4s linear infinite;
+}
+
+.game-card__header {
+  position: relative;
+  padding: 8px 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.game-card__number {
+  font-family: var(--font-display);
+  font-size: .6rem;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+.game-card__rarity {
+  font-size: .6rem;
+  letter-spacing: -.02em;
+}
+
+/* Botão de favoritar exibido sobre a carta */
+.game-card__fav {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 10;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .3);
+  backdrop-filter: blur(4px);
+  font-size: .7rem;
+  transition: transform .2s var(--ease-spring);
+}
+
+.game-card__fav:hover {
+  transform: scale(1.2);
+}
+
+.game-card__fav--active {
+  background: rgba(255, 215, 0, .3);
+}
+
+.game-card__img-wrap {
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 4px;
+}
+
+.game-card__img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .3));
+  transition: transform .4s var(--ease-spring);
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.game-card:hover .game-card__img {
+  transform: scale(1.1) translateY(-4px);
+}
+
+.game-card__meta {
+  padding: 8px 10px 10px;
+  text-align: center;
+}
+
+.game-card__name {
+  font-family: var(--font-display);
+  font-size: .82rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  margin-bottom: 4px;
+  line-height: 1.2;
+  color: var(--text-0);
+}
+
+.game-card__types {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+/* Selo visual do tipo do Pokémon */
+.type-pip {
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: .55rem;
+  font-weight: 600;
+  color: #fff;
+  text-transform: capitalize;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+}
+
+/* Badge com quantidade de cópias da carta */
+.game-card__count {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 10;
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 0 5px;
+}
+
+/* Faixa diagonal indicando carta recém-obtida */
+.game-card__new {
+  position: absolute;
+  top: 36px;
+  right: -20px;
+  z-index: 10;
+  padding: 2px 24px;
+  font-size: .55rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--rarity-legendary);
+  transform: rotate(45deg);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+
+/* ==========================================================================
+   COLLECTION
+   Área de busca, filtros e grade da coleção.
+   ========================================================================== */
+.collection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.coll-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.coll-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 200px;
+}
+
+.coll-search svg {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.coll-search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px 0 38px;
+  border-radius: var(--radius-full);
+  background: var(--bg-2);
+  color: var(--text-0);
+  border: 1px solid var(--border-1);
+  font-size: .85rem;
+  outline: none;
+  transition: border-color .2s ease;
+}
+
+.coll-search input:focus {
+  border-color: var(--accent);
+}
+
+.coll-search input::placeholder {
+  color: var(--text-3);
+}
+
+.coll-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.coll-count {
+  font-size: .75rem;
+  color: var(--text-2);
+  font-weight: 600;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.coll-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+/* Mensagem exibida quando não há cartas na coleção */
+.coll-empty {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.coll-empty__icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  opacity: .5;
+}
+
+.coll-empty h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+
+.coll-empty p {
+  color: var(--text-2);
+  font-size: .85rem;
+  margin-bottom: 16px;
+}
+
+
+/* ==========================================================================
+   FUSION
+   Tela de fusão de cartas repetidas.
+   ========================================================================== */
+.fusion {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.fusion__header {
+  text-align: center;
+}
+
+.fusion__header h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.fusion__header p {
+  color: var(--text-2);
+  font-size: .85rem;
+  margin-top: 4px;
+}
+
+/* Área principal onde o usuário posiciona as cartas */
+.fusion__chamber {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 30px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-xl);
+}
+
+.fusion__slots {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fusion__slot {
+  width: 120px;
+  height: 170px;
+  border-radius: var(--radius-md);
+  border: 2px dashed var(--border-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .3s ease;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+
+.fusion__slot:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg-2));
+  transform: scale(1.02);
+}
+
+/* Slot preenchido com carta selecionada */
+.fusion__slot--filled {
+  border-style: solid;
+}
+
+.fusion__slot-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-3);
+}
+
+.fusion__slot-empty span {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.fusion__slot-empty small {
+  font-size: .6rem;
+}
+
+.fusion__plus {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+/* Ícone indicando a direção da fusão */
+.fusion__arrow {
+  color: var(--accent);
+  animation: arrowBounce 2s ease-in-out infinite;
+}
+
+.fusion__arrow svg {
+  width: 32px;
+  height: 32px;
+}
+
+/* Área de preview do resultado da fusão */
+.fusion__result {
+  width: 140px;
+  height: 190px;
+  border-radius: var(--radius-md);
+  border: 2px dashed var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--accent) 3%, var(--bg-2));
+  overflow: hidden;
+}
+
+.fusion__eligible {
+  margin-top: 10px;
+}
+
+.fusion__elig-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.fusion__elig-empty {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-2);
+}
+
+
+/* ==========================================================================
+   MODAL DO SELETOR DE FUSÃO
+   Janela usada para escolher os Pokémon elegíveis para fusão.
+   ========================================================================== */
+.picker-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.picker-modal__bg {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+  backdrop-filter: blur(8px);
+}
+
+.picker-modal__body {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--bg-1);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .5);
+  animation: modalUp .4s var(--ease-spring);
+  padding: 24px;
+}
+
+.picker-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.picker-modal__header h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.picker-modal__close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-2);
+  border: 1px solid var(--border-1);
+  transition: all .2s ease;
+}
+
+.picker-modal__close:hover {
+  background: var(--bg-3);
+}
+
+.picker-modal__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.picker-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+
+/* ==========================================================================
+   EVOLVE PAGE
+   Tela de evolução de Pokémon usando Stardust.
+   ========================================================================== */
+.evolve {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.evolve__header {
+  text-align: center;
+}
+
+.evolve__header h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.evolve__header p {
+  color: var(--text-2);
+  font-size: .85rem;
+  margin-top: 4px;
+}
+
+/* Quadro com os custos fixos de evolução */
+.evolve__cost-table {
+  background: var(--bg-1);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.evo-cost {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: .8rem;
+  color: var(--text-1);
+  border-bottom: 1px solid var(--border-0);
+}
+
+.evo-cost:last-child {
+  border-bottom: none;
+}
+
+.evo-cost span:last-child {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--text-0);
+  font-family: var(--font-display);
+}
+
+.evolve__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+.evolve__empty {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-2);
+}
+
+/* Botão de evoluir exibido diretamente na carta */
+.game-card__evolve {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  z-index: 10;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #ff9800, #ff5722);
+  color: #fff;
+  font-size: .6rem;
+  font-weight: 700;
+  transition: all .2s var(--ease-spring);
+  box-shadow: 0 2px 8px rgba(255, 152, 0, .3);
+}
+
+.game-card__evolve:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, .4);
+}
+
+
+/* ==========================================================================
+   CARD MODAL
+   Modal detalhado da carta com abas, atributos e informações adicionais.
+   ========================================================================== */
+.card-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.card-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+  backdrop-filter: blur(10px);
+  animation: fadeIn .3s ease;
+}
+
+.card-modal__body {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg-1);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .5);
+  animation: modalUp .5s var(--ease-spring);
+}
+
+.card-modal__body::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Cabeçalho visual do modal da carta */
+.cm-header {
+  position: relative;
+  padding: 24px 24px 60px;
+  overflow: hidden;
+}
+
+.cm-header__bg {
+  position: absolute;
+  inset: 0;
+  opacity: .9;
+}
+
+.cm-header__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(0, 0, 0, .5));
+}
+
+.cm-header__content {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+}
+
+.cm-header__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.cm-header__num {
+  font-family: var(--font-display);
+  font-size: .85rem;
+  font-weight: 700;
+  opacity: .7;
+}
+
+.cm-header__close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .3);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  transition: all .2s ease;
+}
+
+.cm-header__close:hover {
+  background: rgba(0, 0, 0, .5);
+  transform: scale(1.1);
+}
+
+.cm-header__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.cm-header__name {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+  line-height: 1.1;
+}
+
+.cm-header__rarity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.cm-header__types {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* Variação de type-pip para o cabeçalho do modal */
+.cm-header__types .type-pip {
+  background: rgba(255, 255, 255, .2);
+  backdrop-filter: blur(4px);
+  font-size: .7rem;
+  padding: 3px 12px;
+}
+
+/* Imagem principal do Pokémon dentro do modal */
+.cm-header__img {
+  position: absolute;
+  bottom: -10px;
+  right: 16px;
+  width: 160px;
+  height: 160px;
+  z-index: 3;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, .4));
+  animation: floatY 3s ease-in-out infinite;
+}
+
+.cm-body {
+  padding: 20px 24px 24px;
+}
+
+/* Navegação por abas do modal */
+.cm-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-0);
+}
+
+.cm-tab {
+  padding: 8px 14px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text-2);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all .2s ease;
+}
+
+.cm-tab:hover {
+  color: var(--text-1);
+}
+
+.cm-tab--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.cm-panel {
+  display: none;
+}
+
+.cm-panel--active {
+  display: block;
+  animation: fadeUp .3s var(--ease-out);
+}
+
+/* Linha de estatística da carta */
+.cm-stat {
+  display: grid;
+  grid-template-columns: 42px 34px 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.cm-stat__label {
+  font-size: .68rem;
+  font-weight: 600;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.cm-stat__val {
+  font-size: .82rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cm-stat__bar {
+  height: 7px;
+  background: var(--bg-3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+/* Barra de atributo preenchida dinamicamente */
+.cm-stat__fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width .8s var(--ease-out);
+  width: 0;
+}
+
+.cm-total {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-0);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.cm-total span:last-child {
+  font-size: 1.2rem;
+}
+
+/* Grade com dados gerais do Pokémon */
+.cm-about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.cm-about-item {
+  background: var(--bg-2);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+
+.cm-about-item__lbl {
+  font-size: .62rem;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.cm-about-item__val {
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+/* Texto descritivo/flavor do Pokémon */
+.cm-flavor {
+  font-size: .82rem;
+  color: var(--text-1);
+  line-height: 1.6;
+  font-style: italic;
+  padding: 12px;
+  background: var(--bg-2);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent);
+}
+
+/* Cartão de habilidade */
+.cm-ability {
+  background: var(--bg-2);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 8px;
+}
+
+.cm-ability__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.cm-ability__name {
+  font-weight: 700;
+  text-transform: capitalize;
+  font-size: .88rem;
+}
+
+/* Selo indicando habilidade oculta */
+.cm-ability__hidden {
+  font-size: .55rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: rgba(230, 57, 70, .15);
+  color: var(--accent);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.cm-ability__desc {
+  font-size: .78rem;
+  color: var(--text-1);
+  line-height: 1.5;
+}
+
+.cm-nav {
+  display: flex;
+  justify-content: center;
+  padding: 0 24px 20px;
+}
+
+/* Botão de favoritar dentro do modal */
+.cm-fav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: .8rem;
+  font-weight: 600;
+  border: 1px solid var(--border-1);
+  background: var(--bg-2);
+  transition: all .2s var(--ease-spring);
+}
+
+.cm-fav-btn:hover {
+  transform: scale(1.05);
+}
+
+.cm-fav-btn--active {
+  background: rgba(255, 215, 0, .15);
+  border-color: rgba(255, 215, 0, .3);
+  color: #ffd700;
+}
+
+
+/* ==========================================================================
+   RESET MODAL
+   Modal de confirmação para apagar todo o progresso.
+   ========================================================================== */
+.reset-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.reset-modal__bg {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: fadeIn .3s ease;
+}
+
+.reset-modal__box {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-xl);
+  padding: 32px 28px 24px;
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .5);
+  animation: modalUp .4s var(--ease-spring);
+}
+
+.reset-modal__icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.reset-modal__title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-0);
+  margin-bottom: 8px;
+}
+
+.reset-modal__text {
+  font-size: .85rem;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.reset-modal__text strong {
+  color: var(--text-0);
+}
+
+.reset-modal__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.reset-modal__btn {
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  font-size: .85rem;
+  font-weight: 600;
+  transition: all .25s var(--ease-out);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reset-modal__btn--cancel {
+  background: var(--bg-2);
+  color: var(--text-1);
+  border: 1px solid var(--border-1);
+}
+
+.reset-modal__btn--cancel:hover {
+  background: var(--bg-3);
+  color: var(--text-0);
+}
+
+.reset-modal__btn--confirm {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+}
+
+.reset-modal__btn--confirm:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+
+/* ==========================================================================
+   FOOTER
+   Rodapé com autoria, créditos e ações auxiliares.
+   ========================================================================== */
+.footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--border-0);
+  background: var(--bg-1);
+  margin-top: 40px;
+}
+
+.footer__inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 30px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer__brand {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.footer__text {
+  font-size: .82rem;
+  color: var(--text-2);
+}
+
+.footer__text strong {
+  color: var(--text-0);
+  font-weight: 600;
+}
+
+.footer__credits {
+  font-size: .72rem;
+  color: var(--text-3);
+}
+
+.footer__links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .72rem;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+.footer__reset {
+  font-size: .72rem;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+
+
+/* ==========================================================================
+   TOAST
+   Notificações temporárias exibidas na parte inferior da tela.
+   ========================================================================== */
+.toast-wrap {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: var(--radius-full);
+  background: var(--bg-1);
+  border: 1px solid var(--border-1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .3);
+  font-size: .82rem;
+  font-weight: 500;
+  color: var(--text-0);
+  animation: toastIn .4s var(--ease-spring);
+  white-space: nowrap;
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+}
+
+.toast--success {
+  border-color: color-mix(in srgb, var(--rarity-uncommon) 30%, transparent);
+}
+
+.toast--warning {
+  border-color: color-mix(in srgb, var(--rarity-legendary) 30%, transparent);
+}
+
+.toast--error {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Estado de saída do toast */
+.toast--exit {
+  animation: toastOut .3s ease forwards;
+}
+
+
+/* ==========================================================================
+   ANIMAÇÕES
+   Conjunto de animações reutilizadas em toda a interface.
+   ========================================================================== */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modalUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: scale(.5) translateY(40px) rotateY(20deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotateY(0);
+  }
+}
+
+@keyframes pokeShake {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  20%      { transform: translateX(-10px) rotate(-5deg); }
+  40%      { transform: translateX(10px) rotate(5deg); }
+  60%      { transform: translateX(-8px) rotate(-3deg); }
+  80%      { transform: translateX(8px) rotate(3deg); }
+}
+
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+  50%      { box-shadow: 0 0 20px 8px var(--accent-glow); }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: .3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .5;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes shadowPulse {
+  0%, 100% { opacity: .6; }
+  50%      { opacity: 1; }
+}
+
+@keyframes dailyPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+
+@keyframes arrowBounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+@keyframes holoShimmer {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 200% 200%; }
+}
+
+@keyframes rainbowShimmer {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 300% 300%; }
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastOut {
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(.9);
+  }
+}
+
+
+/* ==========================================================================
+   RESPONSIVIDADE
+   Ajustes para tablets e celulares.
+   ========================================================================== */
+@media (max-width: 768px) {
+  .topbar__inner {
+    gap: 8px;
+    padding: 0 12px;
+  }
+
+  .topbar__title {
+    font-size: 1rem;
+  }
+
+  .topbar__resource {
+    padding: 4px 8px;
+    font-size: .75rem;
+  }
+
+  .res-lbl {
+    display: none;
+  }
+
+  .nav {
+    top: 98px;
+    gap: 0;
+    padding: 4px 8px;
+  }
+
+  .nav__item {
+    padding: 5px 10px;
+    font-size: .55rem;
+  }
+
+  .nav__item svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .main {
+    padding: 16px 12px 40px;
+  }
+
+  .dash-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .scard {
+    padding: 12px 8px;
+  }
+
+  .scard__icon {
+    font-size: 1.1rem;
+  }
+
+  .scard__val {
+    font-size: 1.2rem;
+  }
+
+  .coll-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+
+  .game-card {
+    width: 100%;
+  }
+
+  .pull-btn {
+    min-width: 100px;
+    padding: 12px;
+  }
+
+  .fusion__slots {
+    gap: 6px;
+  }
+
+  .fusion__slot {
+    width: 90px;
+    height: 130px;
+  }
+
+  .fusion__chamber {
+    padding: 16px;
+  }
+
+  .card-modal {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .card-modal__body {
+    max-width: 100%;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    max-height: 95vh;
+  }
+
+  .cm-header__name {
+    font-size: 1.4rem;
+  }
+
+  .cm-header__img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .recent-cards {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .dash-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .coll-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .gacha__btns {
+    flex-direction: column;
+  }
+
+  .pull-btn {
+    min-width: 100%;
+  }
+
+  .fusion__slots {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .coll-filters {
+    width: 100%;
+  }
+
+  .coll-filters .sel {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .clock-bar__inner {
+    gap: 8px;
+    font-size: .7rem;
+  }
+
+  .clock__progress {
+    width: 80px;
+  }
+
+  .clock__speed-slider {
+    width: 50px;
+  }
+}

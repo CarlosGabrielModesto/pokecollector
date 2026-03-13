@@ -1,20 +1,42 @@
 <!DOCTYPE html>
+<!--
+  Documento principal da interface do jogo PokéCollector.
+  Estrutura responsável por organizar as telas, modais, barras de status e áreas
+  que serão manipuladas dinamicamente pelo JavaScript.
+-->
+
 <html lang="pt-BR" data-theme="dark">
 <head>
+  <!-- Configurações básicas de codificação e responsividade -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Metadados descritivos do projeto -->
   <meta name="description" content="PokéCollector — Jogo de coleção de cartas Pokémon estilo Gacha." />
   <meta name="author" content="Carlos Gabriel dos Santos Modesto" />
+
+  <!-- Título exibido na aba do navegador -->
   <title>PokéCollector — Card Gacha Game</title>
+
+  <!-- Ícone da aba gerado via SVG embutido -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>" />
+
+  <!-- Pré-conexão para otimizar o carregamento das fontes externas -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Fontes utilizadas na identidade visual do jogo -->
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Folha de estilos principal da aplicação -->
   <link rel="stylesheet" href="src/css/styles.css" />
 </head>
 <body>
 
-  <!-- SPLASH / LOADING SCREEN -->
+  <!--
+    Tela de abertura/carregamento exibida antes da aplicação principal.
+    Apresenta identidade visual, barra de progresso e status de conexão com a API.
+  -->
   <div class="splash" id="splash">
     <div class="splash__content">
       <div class="splash__pokeball">
@@ -25,36 +47,69 @@
       <h1 class="splash__title">PokéCollector</h1>
       <p class="splash__subtitle">Card Gacha Game</p>
       <div class="splash__bar-wrap">
+        <!-- Barra preenchida dinamicamente durante o carregamento -->
         <div class="splash__bar" id="splashBar"></div>
       </div>
+      <!-- Texto de status atualizado conforme o progresso da inicialização -->
       <p class="splash__status" id="splashStatus">Conectando à PokéAPI...</p>
     </div>
   </div>
 
+  <!-- Canvas de partículas decorativas do plano de fundo -->
   <canvas id="particles" class="particles-canvas"></canvas>
 
-  <!-- TOPBAR -->
+  <!--
+    Barra superior da aplicação.
+    Exibe nome do jogo, recursos do jogador e botão de recompensa diária.
+  -->
   <header class="topbar">
     <div class="topbar__inner">
       <div class="topbar__brand">
-        <div class="pokeball-mini"><div class="pokeball-mini__top"></div><div class="pokeball-mini__bottom"></div><div class="pokeball-mini__band"><div class="pokeball-mini__btn"></div></div></div>
-        <div><h1 class="topbar__title">PokéCollector</h1><span class="topbar__tagline">Card Gacha Game</span></div>
+        <div class="pokeball-mini">
+          <div class="pokeball-mini__top"></div>
+          <div class="pokeball-mini__bottom"></div>
+          <div class="pokeball-mini__band"><div class="pokeball-mini__btn"></div></div>
+        </div>
+        <div>
+          <h1 class="topbar__title">PokéCollector</h1>
+          <span class="topbar__tagline">Card Gacha Game</span>
+        </div>
       </div>
+
+      <!-- Painel com moedas, Stardust e ação diária -->
       <div class="topbar__wallet">
-        <div class="topbar__resource"><span>💰</span><span class="res-val" id="coinsValue">0</span><span class="res-lbl">PC</span></div>
-        <div class="topbar__resource topbar__resource--dust"><span>✨</span><span class="res-val" id="dustValue">0</span><span class="res-lbl">Stardust</span></div>
-        <button class="topbar__daily" id="dailyBtn"><span>🎁</span><span id="dailyText">Grátis!</span></button>
+        <div class="topbar__resource">
+          <span>💰</span>
+          <span class="res-val" id="coinsValue">0</span>
+          <span class="res-lbl">PC</span>
+        </div>
+        <div class="topbar__resource topbar__resource--dust">
+          <span>✨</span>
+          <span class="res-val" id="dustValue">0</span>
+          <span class="res-lbl">Stardust</span>
+        </div>
+        <button class="topbar__daily" id="dailyBtn">
+          <span>🎁</span>
+          <span id="dailyText">Grátis!</span>
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- CLOCK BAR -->
+  <!--
+    Barra de relógio do jogo.
+    Mostra horário interno, dia atual, progresso do ciclo e velocidade simulada.
+  -->
   <div class="clock-bar">
     <div class="clock-bar__inner">
       <span class="clock__icon" id="clockIcon">🌙</span>
       <span class="clock__time" id="clockTime">00:00</span>
       <span class="clock__day" id="clockDay">Dia 1</span>
+
+      <!-- Indicador visual do avanço do tempo no ciclo atual -->
       <div class="clock__progress"><div class="clock__fill" id="clockFill"></div></div>
+
+      <!-- Controle de velocidade da passagem do tempo no jogo -->
       <div class="clock__speed">
         <label class="clock__speed-label" for="speedRange">⏩</label>
         <input type="range" id="speedRange" class="clock__speed-slider" min="1" max="60" value="1" />
@@ -63,7 +118,10 @@
     </div>
   </div>
 
-  <!-- NAV -->
+  <!--
+    Navegação principal entre as áreas do sistema.
+    Cada botão referencia uma view que será ativada via JavaScript.
+  -->
   <nav class="nav" id="mainNav">
     <button class="nav__item nav__item--active" data-view="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Dashboard</span></button>
     <button class="nav__item" data-view="gacha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><circle cx="12" cy="12" r="3"/></svg><span>Gacha</span></button>
@@ -72,13 +130,24 @@
     <button class="nav__item" data-view="evolve"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><span>Evolução</span></button>
   </nav>
 
-  <!-- VIEWS -->
+  <!--
+    Área principal que contém todas as views do sistema.
+    Apenas uma seção permanece visível por vez.
+  -->
   <main class="main">
 
-    <!-- DASHBOARD -->
+    <!--
+      View inicial do jogo.
+      Apresenta visão geral do progresso do jogador, estatísticas e atalhos rápidos.
+    -->
     <section class="view view--active" id="viewDashboard">
       <div class="dashboard">
-        <div class="dash-welcome"><h2>Bem-vindo, Treinador! 👋</h2><p>Colete, funda e complete sua Pokédex.</p></div>
+        <div class="dash-welcome">
+          <h2>Bem-vindo, Treinador! 👋</h2>
+          <p>Colete, funda e complete sua Pokédex.</p>
+        </div>
+
+        <!-- Cartões-resumo com estatísticas principais do jogador -->
         <div class="dash-stats" id="dashStats">
           <div class="scard scard--accent"><span class="scard__icon">🎴</span><span class="scard__val" id="statUnique">0</span><span class="scard__lbl">Únicos</span><span class="scard__sub" id="statMax">/386</span></div>
           <div class="scard"><span class="scard__icon">📦</span><span class="scard__val" id="statTotal">0</span><span class="scard__lbl">Total Cartas</span></div>
@@ -87,42 +156,85 @@
           <div class="scard"><span class="scard__icon">🔥</span><span class="scard__val" id="statStreak">0</span><span class="scard__lbl">Dias Seguidos</span></div>
           <div class="scard"><span class="scard__icon">🎰</span><span class="scard__val" id="statPulls">0</span><span class="scard__lbl">Pulls Totais</span></div>
         </div>
-        <div class="dash-section"><h3 class="stitle">Progresso por Raridade</h3><div class="rarity-progress" id="rarityBars"></div></div>
-        <div class="dash-section"><h3 class="stitle">Últimas Obtenções</h3><div class="recent-cards" id="recentCards"><p class="muted">Nenhuma carta ainda. Vá para o Gacha!</p></div></div>
+
+        <!-- Progresso agregado por nível de raridade -->
+        <div class="dash-section">
+          <h3 class="stitle">Progresso por Raridade</h3>
+          <div class="rarity-progress" id="rarityBars"></div>
+        </div>
+
+        <!-- Lista das cartas obtidas mais recentemente -->
+        <div class="dash-section">
+          <h3 class="stitle">Últimas Obtenções</h3>
+          <div class="recent-cards" id="recentCards"><p class="muted">Nenhuma carta ainda. Vá para o Gacha!</p></div>
+        </div>
+
+        <!-- Atalho para iniciar abertura rápida de pacote -->
         <button class="cta-btn" id="dashGo">🎰 Abrir Pacote Rápido</button>
       </div>
     </section>
 
-    <!-- GACHA -->
+    <!--
+      View do sistema Gacha.
+      Controla animações, resultado da abertura e opções de compra/uso gratuito.
+    -->
     <section class="view" id="viewGacha">
       <div class="gacha">
+
+        <!-- Área visual onde ocorrem os estados da abertura -->
         <div class="gacha__stage" id="gachaStage">
+
+          <!-- Estado ocioso antes da abertura -->
           <div class="gacha__idle" id="gachaIdle">
             <div class="pokeball-big-wrap">
-              <div class="pokeball-big" id="pokeball"><div class="pokeball-big__top"></div><div class="pokeball-big__band"><div class="pokeball-big__btn"></div></div><div class="pokeball-big__bottom"></div><div class="pokeball-big__shine"></div></div>
+              <div class="pokeball-big" id="pokeball">
+                <div class="pokeball-big__top"></div>
+                <div class="pokeball-big__band"><div class="pokeball-big__btn"></div></div>
+                <div class="pokeball-big__bottom"></div>
+                <div class="pokeball-big__shine"></div>
+              </div>
               <div class="pokeball-shadow"></div>
             </div>
             <p class="gacha__hint">Escolha um tipo de abertura abaixo</p>
           </div>
+
+          <!-- Estado de animação durante a abertura -->
           <div class="gacha__pulling hidden" id="gachaPulling">
             <div class="pokeball-big-wrap pokeball-big-wrap--shake">
-              <div class="pokeball-big pokeball-big--glow"><div class="pokeball-big__top"></div><div class="pokeball-big__band"><div class="pokeball-big__btn pokeball-big__btn--pulse"></div></div><div class="pokeball-big__bottom"></div><div class="pokeball-big__shine"></div></div>
+              <div class="pokeball-big pokeball-big--glow">
+                <div class="pokeball-big__top"></div>
+                <div class="pokeball-big__band"><div class="pokeball-big__btn pokeball-big__btn--pulse"></div></div>
+                <div class="pokeball-big__bottom"></div>
+                <div class="pokeball-big__shine"></div>
+              </div>
               <div class="pokeball-shadow pokeball-shadow--glow"></div>
             </div>
           </div>
+
+          <!-- Resultado de abertura individual -->
           <div class="gacha__result hidden" id="gachaResult">
             <div class="gacha__result-glow" id="resultGlow"></div>
             <div class="gacha__result-card" id="resultCard"></div>
             <div class="gacha__result-info" id="resultInfo"></div>
-            <div class="gacha__result-actions"><button class="btn btn--primary" id="resultNext">✨ Continuar</button></div>
+            <div class="gacha__result-actions">
+              <button class="btn btn--primary" id="resultNext">✨ Continuar</button>
+            </div>
           </div>
+
+          <!-- Resultado de abertura múltipla -->
           <div class="gacha__multi hidden" id="gachaMulti">
             <div class="gacha__multi-cards" id="multiCards"></div>
-            <div class="gacha__result-actions"><button class="btn btn--primary" id="multiCollect">✨ Coletar Todas</button></div>
+            <div class="gacha__result-actions">
+              <button class="btn btn--primary" id="multiCollect">✨ Coletar Todas</button>
+            </div>
           </div>
         </div>
+
+        <!-- Painel de controles e probabilidades do Gacha -->
         <div class="gacha__controls">
           <button class="gacha__rates-btn" id="ratesToggle">📊 Probabilidades</button>
+
+          <!-- Tabela de chances por raridade -->
           <div class="gacha__rates hidden" id="ratesPanel">
             <div class="rate"><span class="rdot rdot--common"></span>Comum<span>40%</span></div>
             <div class="rate"><span class="rdot rdot--uncommon"></span>Incomum<span>30%</span></div>
@@ -131,6 +243,8 @@
             <div class="rate"><span class="rdot rdot--legendary"></span>Lendário<span>3.2%</span></div>
             <div class="rate"><span class="rdot rdot--mythic"></span>Mítico<span>0.8%</span></div>
           </div>
+
+          <!-- Botões de abertura individual, múltipla e gratuita -->
           <div class="gacha__btns">
             <button class="pull-btn pull-btn--single" id="pullSingle"><div class="pull-btn__inner"><span class="pull-btn__icon">🔴</span><span class="pull-btn__label">Abrir ×1</span><span class="pull-btn__cost">100 PC</span></div></button>
             <button class="pull-btn pull-btn--multi" id="pullMulti"><div class="pull-btn__inner"><span class="pull-btn__icon">⚡</span><span class="pull-btn__label">Abrir ×5</span><span class="pull-btn__cost">450 PC</span></div><span class="pull-btn__badge">-10%</span></button>
@@ -140,27 +254,53 @@
       </div>
     </section>
 
-    <!-- COLLECTION -->
+    <!--
+      View da coleção.
+      Permite pesquisar, filtrar, ordenar e visualizar as cartas obtidas.
+    -->
     <section class="view" id="viewCollection">
       <div class="collection">
+
+        <!-- Barra de ferramentas da coleção -->
         <div class="coll-toolbar">
           <div class="coll-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="collSearch" placeholder="Buscar por nome ou nº..." autocomplete="off" spellcheck="false"/></div>
+
+          <!-- Filtros por tipo, raridade e critério de ordenação -->
           <div class="coll-filters">
             <select id="collType" class="sel"><option value="all">Todos Tipos</option></select>
             <select id="collRarity" class="sel"><option value="all">Todas Raridades</option><option value="common">★ Comum</option><option value="uncommon">★★ Incomum</option><option value="rare">★★★ Raro</option><option value="epic">★★★★ Épico</option><option value="legendary">★★★★★ Lendário</option><option value="mythic">★★★★★★ Mítico</option></select>
             <select id="collSort" class="sel"><option value="recent">Recentes</option><option value="id-asc">Nº ↑</option><option value="name-asc">A → Z</option><option value="rarity-desc">Raridade ↓</option><option value="count-desc">Duplicatas ↓</option><option value="favorites">Favoritos</option></select>
           </div>
+
+          <!-- Quantidade atual de cartas exibidas/registradas -->
           <span class="coll-count" id="collCount">0 cartas</span>
         </div>
+
+        <!-- Grade principal das cartas da coleção -->
         <div class="coll-grid" id="collGrid"></div>
-        <div class="coll-empty hidden" id="collEmpty"><div class="coll-empty__icon">🃏</div><h3>Coleção vazia</h3><p>Abra pacotes no Gacha para começar!</p><button class="btn btn--primary" id="collGoGacha">Ir para o Gacha</button></div>
+
+        <!-- Mensagem de estado vazio -->
+        <div class="coll-empty hidden" id="collEmpty">
+          <div class="coll-empty__icon">🃏</div>
+          <h3>Coleção vazia</h3>
+          <p>Abra pacotes no Gacha para começar!</p>
+          <button class="btn btn--primary" id="collGoGacha">Ir para o Gacha</button>
+        </div>
       </div>
     </section>
 
-    <!-- FUSION -->
+    <!--
+      View de fusão.
+      Permite combinar três cartas iguais para obter uma carta de raridade superior.
+    -->
     <section class="view" id="viewFusion">
       <div class="fusion">
-        <div class="fusion__header"><h2>Fusão de Cartas</h2><p>Combine <strong>3 cartas iguais</strong> para obter 1 carta da raridade superior!</p></div>
+        <div class="fusion__header">
+          <h2>Fusão de Cartas</h2>
+          <p>Combine <strong>3 cartas iguais</strong> para obter 1 carta da raridade superior!</p>
+        </div>
+
+        <!-- Câmara principal onde as cartas selecionadas serão posicionadas -->
         <div class="fusion__chamber">
           <div class="fusion__slots">
             <div class="fusion__slot" data-slot="0" id="fSlot0"><div class="fusion__slot-empty"><span>+</span><small>Selecionar</small></div></div>
@@ -169,18 +309,38 @@
             <div class="fusion__plus">+</div>
             <div class="fusion__slot" data-slot="2" id="fSlot2"><div class="fusion__slot-empty"><span>+</span><small>Selecionar</small></div></div>
           </div>
+
+          <!-- Indicador visual de transformação -->
           <div class="fusion__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></div>
+
+          <!-- Espaço destinado ao resultado previsto da fusão -->
           <div class="fusion__result" id="fusionResult"><div class="fusion__slot-empty"><span>?</span><small>Resultado</small></div></div>
+
+          <!-- Botão inicialmente desabilitado até a seleção válida das cartas -->
           <button class="btn btn--primary btn--lg" id="fusionBtn" disabled>⚡ Fundir</button>
         </div>
-        <div class="fusion__eligible"><h3 class="stitle">Cartas Elegíveis <small>(3+ cópias)</small></h3><div class="fusion__elig-grid" id="fusionGrid"></div><div class="fusion__elig-empty hidden" id="fusionEmpty"><p>Colete mais duplicatas para poder fundir!</p></div></div>
+
+        <!-- Grade com cartas que possuem cópias suficientes para fusão -->
+        <div class="fusion__eligible">
+          <h3 class="stitle">Cartas Elegíveis <small>(3+ cópias)</small></h3>
+          <div class="fusion__elig-grid" id="fusionGrid"></div>
+          <div class="fusion__elig-empty hidden" id="fusionEmpty"><p>Colete mais duplicatas para poder fundir!</p></div>
+        </div>
       </div>
     </section>
 
-    <!-- EVOLVE -->
+    <!--
+      View de evolução.
+      Permite gastar Stardust para evoluir cartas dentro da progressão do jogo.
+    -->
     <section class="view" id="viewEvolve">
       <div class="evolve">
-        <div class="evolve__header"><h2>Evolução</h2><p>Use <strong>Stardust ✨</strong> para evoluir seus Pokémon! Quanto mais raro, mais Stardust necessário.</p></div>
+        <div class="evolve__header">
+          <h2>Evolução</h2>
+          <p>Use <strong>Stardust ✨</strong> para evoluir seus Pokémon! Quanto mais raro, mais Stardust necessário.</p>
+        </div>
+
+        <!-- Tabela fixa com os custos de evolução por raridade -->
         <div class="evolve__cost-table">
           <div class="evo-cost"><span class="rdot rdot--common"></span>Comum → Incomum<span>50 ✨</span></div>
           <div class="evo-cost"><span class="rdot rdot--uncommon"></span>Incomum → Raro<span>120 ✨</span></div>
@@ -188,27 +348,45 @@
           <div class="evo-cost"><span class="rdot rdot--epic"></span>Épico → Lendário<span>500 ✨</span></div>
           <div class="evo-cost"><span class="rdot rdot--legendary"></span>Lendário → Mítico<span>1000 ✨</span></div>
         </div>
-        <div class="evolve__grid-section"><h3 class="stitle">Pokémon Evolutíveis</h3><div class="evolve__grid" id="evolveGrid"></div><div class="evolve__empty hidden" id="evolveEmpty"><p>Nenhum Pokémon pode ser evoluído agora.</p></div></div>
+
+        <!-- Grade com os Pokémon atualmente aptos a evoluir -->
+        <div class="evolve__grid-section">
+          <h3 class="stitle">Pokémon Evolutíveis</h3>
+          <div class="evolve__grid" id="evolveGrid"></div>
+          <div class="evolve__empty hidden" id="evolveEmpty"><p>Nenhum Pokémon pode ser evoluído agora.</p></div>
+        </div>
       </div>
     </section>
   </main>
 
-  <!-- FUSION PICKER MODAL -->
+  <!--
+    Modal de seleção para fusão.
+    Exibe as opções de Pokémon disponíveis para preencher os slots da fusão.
+  -->
   <div class="picker-modal hidden" id="pickerModal">
     <div class="picker-modal__bg" id="pickerModalBg"></div>
     <div class="picker-modal__body">
-      <div class="picker-modal__header"><h3>Selecionar Pokémon para Fusão</h3><button class="picker-modal__close" id="pickerClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="picker-modal__header">
+        <h3>Selecionar Pokémon para Fusão</h3>
+        <button class="picker-modal__close" id="pickerClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
       <div class="picker-modal__grid" id="pickerGrid"></div>
     </div>
   </div>
 
-  <!-- CARD DETAIL MODAL -->
+  <!--
+    Modal de detalhes da carta.
+    O conteúdo interno é preenchido dinamicamente quando o usuário abre uma carta.
+  -->
   <div class="card-modal hidden" id="cardModal">
     <div class="card-modal__backdrop" id="cardModalBg"></div>
     <div class="card-modal__body" id="cardModalBody"></div>
   </div>
 
-  <!-- RESET CONFIRMATION MODAL -->
+  <!--
+    Modal de confirmação para reset total do progresso.
+    Evita exclusão acidental dos dados do jogador.
+  -->
   <div class="reset-modal hidden" id="resetModal">
     <div class="reset-modal__bg" id="resetModalBg"></div>
     <div class="reset-modal__box">
@@ -225,11 +403,16 @@
     </div>
   </div>
 
-  <!-- TOASTS -->
+  <!-- Área onde notificações temporárias (toasts) serão inseridas dinamicamente -->
   <div class="toast-wrap" id="toastWrap"></div>
+
+  <!-- Canvas usado para efeitos visuais de comemoração -->
   <canvas id="confetti" class="confetti-canvas"></canvas>
 
-  <!-- FOOTER -->
+  <!--
+    Rodapé institucional do projeto.
+    Exibe autoria, créditos de dados/imagens e links auxiliares.
+  -->
   <footer class="footer">
     <div class="footer__inner">
       <div class="footer__brand">🎴 PokéCollector</div>
@@ -243,6 +426,7 @@
     </div>
   </footer>
 
+  <!-- Script principal responsável pela lógica e interatividade da aplicação -->
   <script src="src/js/app.js"></script>
 </body>
 </html>
